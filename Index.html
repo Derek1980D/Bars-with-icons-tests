@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Progress Bars Game with Icons</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game-container {
+            text-align: center;
+        }
+        .progress-container {
+            width: 300px;
+            margin: 20px auto;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 5px;
+        }
+        .progress {
+            width: 0;
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease-in-out;
+        }
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            animation: glimmer 1.5s infinite;
+        }
+        @keyframes glimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        #progress1 .progress { background-color: #4CAF50; }
+        #progress2 .progress { background-color: #2196F3; }
+        #progress3 .progress { background-color: #FFC107; }
+        .progress-text {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .progress-text i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Progress Bar Game</h1>
+        <div class="progress-container">
+            <div class="progress-text" id="text1">
+                <i class="fas fa-tree"></i>
+                <span>Progress 1: 0%</span>
+            </div>
+            <div id="progress1" class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="progress-text" id="text2">
+                <i class="fas fa-water"></i>
+                <span>Progress 2: 0%</span>
+            </div>
+            <div id="progress2" class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="progress-text" id="text3">
+                <i class="fas fa-sun"></i>
+                <span>Progress 3: 0%</span>
+            </div>
+            <div id="progress3" class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+        <button id="startButton">Start Game</button>
+        <button id="resetButton" style="display:none;">Reset Game</button>
+    </div>
+
+    <script>
+        let gameLoop;
+        let progress1 = 0, progress2 = 0, progress3 = 0;
+
+        function updateProgress(id, value) {
+            const progressBar = document.querySelector(`#${id} .progress`);
+            const textElement = document.querySelector(`#text${id.slice(-1)} span`);
+            progressBar.style.width = `${value}%`;
+            textElement.textContent = `Progress ${id.slice(-1)}: ${Math.round(value)}%`;
+        }
+
+        function gameStep() {
+            if (Math.random() < 0.7) progress1 += Math.random() * 2;
+            if (Math.random() < 0.5) progress2 += Math.random() * 1.5;
+            if (Math.random() < 0.3) progress3 += Math.random();
+
+            progress1 = Math.min(progress1, 100);
+            progress2 = Math.min(progress2, 100);
+            progress3 = Math.min(progress3, 100);
+
+            updateProgress('progress1', progress1);
+            updateProgress('progress2', progress2);
+            updateProgress('progress3', progress3);
+
+            if (progress1 >= 100 && progress2 >= 100 && progress3 >= 100) {
+                clearInterval(gameLoop);
+                document.getElementById('startButton').style.display = 'none';
+                document.getElementById('resetButton').style.display = 'inline-block';
+            }
+        }
+
+        function startGame() {
+            gameLoop = setInterval(gameStep, 50);
+            document.getElementById('startButton').disabled = true;
+        }
+
+        function resetGame() {
+            clearInterval(gameLoop);
+            progress1 = progress2 = progress3 = 0;
+            updateProgress('progress1', 0);
+            updateProgress('progress2', 0);
+            updateProgress('progress3', 0);
+            document.getElementById('startButton').disabled = false;
+            document.getElementById('startButton').style.display = 'inline-block';
+            document.getElementById('resetButton').style.display = 'none';
+        }
+
+        document.getElementById('startButton').addEventListener('click', startGame);
+        document.getElementById('resetButton').addEventListener('click', resetGame);
+    </script>
+</body>
+</html
