@@ -3,160 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Progress Bars Game with Icons</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Arcane Ascension</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #0f0f1e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            min-height: 100vh;
         }
         .game-container {
-            text-align: center;
+            background: linear-gradient(135deg, #16213e, #1a1a2e);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(78, 204, 163, 0.2);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
-        .progress-container {
-            width: 300px;
-            margin: 20px auto;
+        h1, h2 {
+            text-align: center;
+            color: #4ecca3;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #4ecca3;
+        }
+        .resources, .skills {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .resource, .skill {
+            text-align: center;
+            font-size: 18px;
+            background: linear-gradient(45deg, #1e2a4a, #2a3a6a);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        .resource::after, .skill::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        button {
+            background: linear-gradient(45deg, #4ecca3, #45b7a0);
+            border: none;
+            color: #1a1a2e;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(78, 204, 163, 0.5);
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+        button:hover::after {
+            transform: translateX(100%) rotate(45deg);
         }
         .progress-bar {
             width: 100%;
-            height: 30px;
-            background-color: #e0e0e0;
-            border-radius: 15px;
+            background-color: #0f3460;
+            border-radius: 5px;
+            margin-top: 20px;
             overflow: hidden;
             position: relative;
-            margin-top: 5px;
         }
         .progress {
-            width: 0;
-            height: 100%;
-            border-radius: 15px;
+            width: 0%;
+            height: 20px;
+            background: linear-gradient(90deg, #4ecca3, #45b7a0);
             transition: width 0.5s ease-in-out;
         }
-        .progress::after {
-            content: '';
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            background-color: #2a3a6a;
+            color: #e0e0e0;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #magicCircle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        #magicCircle {
+            animation: rotate 60s linear infinite;
+        }
+        .spline {
             position: absolute;
             top: 0;
-            left: -100%;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.3) 50%,
-                rgba(255,255,255,0) 100%
-            );
-            animation: glimmer 1.5s infinite;
-        }
-        @keyframes glimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        #progress1 .progress { background-color: #4CAF50; }
-        #progress2 .progress { background-color: #2196F3; }
-        #progress3 .progress { background-color: #FFC107; }
-        .progress-text {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-        .progress-text i {
-            margin-right: 10px;
-            font-size: 24px;
-        }
-        button {
-            font-size: 16px;
-            padding: 10px 20px;
-            margin: 10px;
-            cursor: pointer;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>Progress Bar Game</h1>
-        <div class="progress-container">
-            <div class="progress-text" id="text1">
-                <i class="fas fa-tree"></i>
-                <span>Progress 1: 0%</span>
+        <svg class="spline" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="splineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4ecca3;stop-opacity:0.3" />
+                    <stop offset="100%" style="stop-color:#45b7a0;stop-opacity:0.3" />
+                </linearGradient>
+            </defs>
+            <path d="M0,50 Q200,0 400,50 T800,50" fill="none" stroke="url(#splineGradient)" stroke-width="3">
+                <animate attributeName="d" 
+                    values="M0,50 Q200,0 400,50 T800,50;
+                            M0,50 Q200,100 400,50 T800,50;
+                            M0,50 Q200,0 400,50 T800,50" 
+                    dur="10s" 
+                    repeatCount="indefinite" />
+            </path>
+        </svg>
+
+        <svg id="magicCircle" width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="150" cy="150" r="145" fill="none" stroke="#4ecca3" stroke-width="2" />
+            <circle cx="150" cy="150" r="120" fill="none" stroke="#4ecca3" stroke-width="2" />
+            <path d="M150,5 L150,295 M5,150 L295,150" stroke="#4ecca3" stroke-width="2" />
+            <path d="M44,44 L256,256 M44,256 L256,44" stroke="#4ecca3" stroke-width="2" />
+        </svg>
+
+        <h1>Arcane Ascension</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'main')">Main</button>
+            <button class="tab" onclick="openTab(event, 'skills')">Skills</button>
+        </div>
+
+        <div id="main" class="tab-content active">
+            <div class="resources">
+                <div class="resource">Mana: <span id="mana">0</span></div>
+                <div class="resource">Knowledge: <span id="knowledge">0</span></div>
+                <div class="resource">Essence: <span id="essence">0</span></div>
             </div>
-            <div id="progress1" class="progress-bar">
-                <div class="progress"></div>
+            <div class="actions">
+                <button onclick="gatherMana()">Gather Mana</button>
+                <button onclick="study()">Study Magic</button>
+                <button onclick="meditate()">Meditate</button>
+                <button onclick="castSpell()">Cast Spell</button>
             </div>
-            <div class="progress-text" id="text2">
-                <i class="fas fa-water"></i>
-                <span>Progress 2: 0%</span>
-            </div>
-            <div id="progress2" class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="progress-text" id="text3">
-                <i class="fas fa-sun"></i>
-                <span>Progress 3: 0%</span>
-            </div>
-            <div id="progress3" class="progress-bar">
-                <div class="progress"></div>
+            <div class="progress-bar">
+                <div id="progressBar" class="progress"></div>
             </div>
         </div>
-        <button id="startButton">Start Game</button>
-        <button id="resetButton" style="display:none;">Reset Game</button>
+
+        <div id="skills" class="tab-content">
+            <h2>Magical Skills</h2>
+            <div class="skills">
+                <div class="skill">Meditation: Level <span id="meditationLevel">1</span></div>
+                <div class="skill">Spellcasting: Level <span id="spellcastingLevel">1</span></div>
+                <div class="skill">Alchemy: Level <span id="alchemyLevel">1</span></div>
+            </div>
+            <div class="actions">
+                <button onclick="upgradeSkill('meditation')">Upgrade Meditation</button>
+                <button onclick="upgradeSkill('spellcasting')">Upgrade Spellcasting</button>
+                <button onclick="upgradeSkill('alchemy')">Upgrade Alchemy</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let gameLoop;
-        let progress1 = 0, progress2 = 0, progress3 = 0;
+        let mana = 0;
+        let knowledge = 0;
+        let essence = 0;
+        let meditationLevel = 1;
+        let spellcastingLevel = 1;
+        let alchemyLevel = 1;
 
-        function updateProgress(id, value) {
-            const progressBar = document.querySelector(`#${id} .progress`);
-            const textElement = document.querySelector(`#text${id.slice(-1)} span`);
-            progressBar.style.width = `${value}%`;
-            textElement.textContent = `Progress ${id.slice(-1)}: ${Math.round(value)}%`;
+        function updateDisplay() {
+            document.getElementById('mana').textContent = Math.floor(mana);
+            document.getElementById('knowledge').textContent = Math.floor(knowledge);
+            document.getElementById('essence').textContent = Math.floor(essence);
+            document.getElementById('meditationLevel').textContent = meditationLevel;
+            document.getElementById('spellcastingLevel').textContent = spellcastingLevel;
+            document.getElementById('alchemyLevel').textContent = alchemyLevel;
         }
 
-        function gameStep() {
-            if (Math.random() < 0.7) progress1 += Math.random() * 2;
-            if (Math.random() < 0.5) progress2 += Math.random() * 1.5;
-            if (Math.random() < 0.3) progress3 += Math.random();
+        function gatherMana() {
+            mana += 10 * meditationLevel; // Increased for faster progression
+            updateDisplay();
+            animateButton(event.target);
+        }
 
-            progress1 = Math.min(progress1, 100);
-            progress2 = Math.min(progress2, 100);
-            progress3 = Math.min(progress3, 100);
-
-            updateProgress('progress1', progress1);
-            updateProgress('progress2', progress2);
-            updateProgress('progress3', progress3);
-
-            if (progress1 >= 100 && progress2 >= 100 && progress3 >= 100) {
-                clearInterval(gameLoop);
-                document.getElementById('startButton').style.display = 'none';
-                document.getElementById('resetButton').style.display = 'inline-block';
+        function study() {
+            if (mana >= 5) {
+                mana -= 5;
+                knowledge += 5 * spellcastingLevel; // Increased for faster progression
+                updateDisplay();
+                animateButton(event.target);
             }
         }
 
-        function startGame() {
-            gameLoop = setInterval(gameStep, 50);
-            document.getElementById('startButton').disabled = true;
+        function meditate() {
+            if (knowledge >= 10) {
+                knowledge -= 10;
+                essence += 5; // Increased for faster progression
+                updateDisplay();
+                animateButton(event.target);
+            }
         }
 
-        function resetGame() {
-            clearInterval(gameLoop);
-            progress1 = progress2 = progress3 = 0;
-            updateProgress('progress1', 0);
-            updateProgress('progress2', 0);
-            updateProgress('progress3', 0);
-            document.getElementById('startButton').disabled = false;
-            document.getElementById('startButton').style.display = 'inline-block';
-            document.getElementById('resetButton').style.display = 'none';
+        function castSpell() {
+            if (mana >= 20 && knowledge >= 5) {
+                mana -= 20;
+                knowledge -= 5;
+                essence += 10 * alchemyLevel; // Increased for faster progression
+                updateDisplay();
+                animateButton(event.target);
+            }
         }
 
-        document.getElementById('startButton').addEventListener('click', startGame);
-        document.getElementById('resetButton').addEventListener('click', resetGame);
+        function upgradeSkill(skill) {
+            const cost = Math.pow(1.5, eval(`${skill}Level`)) * 10; // Reduced cost for faster progression
+            if (essence >= cost) {
+                essence -= cost;
+                eval(`${skill}Level++`);
+                updateDisplay();
+                animateButton(event.target);
+            }
+        }
+
+        function animateButton(button) {
+            button.style.transform = 'scale(1.1)';
+            setTimeout(() => button.style.transform = 'scale(1)', 100);
+        }
+
+        function updateProgressBar() {
+            const progress = (knowledge / 1000) * 100;
+            document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabContent, tabLinks;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+            tabLinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        setInterval(() => {
+            mana += 1 * meditationLevel; // Increased for faster progression
+            knowledge += 0.5 * spellcastingLevel; // Increased for faster progression
+            essence += 0.1 * alchemyLevel; // Increased for faster progression
+            updateDisplay();
+            updateProgressBar();
+        }, 100);
+
+        updateDisplay();
     </script>
 </body>
-</html
+</html>
